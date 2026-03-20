@@ -124,17 +124,133 @@ Delete a user by ID.
 
 ## File Routes
 
-> **Note**: File storage routes are pending implementation.
+> **Status**: ✅ Complete
 
-### Planned Endpoints
+### `POST /users/{user_id}/files`
 
-| Method | Endpoint              | Description                    |
-|--------|-----------------------|--------------------------------|
-| `POST` | `/users/{user_id}/files` | Upload a file for a user    |
-| `GET`  | `/users/{user_id}/files` | List files for a user       |
-| `GET`  | `/users/{user_id}/files/{file_id}` | Get file metadata |
-| `GET`  | `/files/{file_id}/download` | Download a file          |
-| `DELETE` | `/users/{user_id}/files/{file_id}` | Delete a file   |
+Upload a file for a user.
+
+**Path Parameters:**
+- `user_id` (integer): The user's unique identifier
+
+**Request Body:** `multipart/form-data`
+- `file` (file, required): The file to upload
+
+**Success Response (201 Created):**
+```json
+{
+  "message": "File uploaded successfully",
+  "filename": "document.pdf",
+  "user_id": 1
+}
+```
+
+**Error Responses:**
+- `404 Not Found` - User not found
+- `409 Conflict` - File already exists for this user
+- `400 Bad Request` - Failed to upload file
+
+---
+
+### `GET /users/{user_id}/files`
+
+List all files for a user.
+
+**Path Parameters:**
+- `user_id` (integer): The user's unique identifier
+
+**Success Response (200 OK):**
+```json
+[
+  {
+    "id": 1,
+    "user_id": 1,
+    "filename": "document.pdf",
+    "created_at": "2026-03-20T11:00:00"
+  },
+  {
+    "id": 2,
+    "user_id": 1,
+    "filename": "image.png",
+    "created_at": "2026-03-20T11:30:00"
+  }
+]
+```
+
+**Error Responses:**
+- `404 Not Found` - User not found
+
+---
+
+### `GET /users/{user_id}/files/{filename}`
+
+Get file metadata.
+
+**Path Parameters:**
+- `user_id` (integer): The user's unique identifier
+- `filename` (string): The name of the file
+
+**Success Response (200 OK):**
+```json
+{
+  "id": 1,
+  "user_id": 1,
+  "filename": "document.pdf",
+  "created_at": "2026-03-20T11:00:00"
+}
+```
+
+**Error Responses:**
+- `404 Not Found` - User not found or File not found
+
+---
+
+### `GET /users/{user_id}/files/{filename}/download`
+
+Download a file.
+
+**Path Parameters:**
+- `user_id` (integer): The user's unique identifier
+- `filename` (string): The name of the file
+
+**Success Response (200 OK):**
+- Returns the file content with `Content-Type: application/octet-stream`
+
+**Error Responses:**
+- `404 Not Found` - User not found or File not found
+
+---
+
+### `DELETE /users/{user_id}/files/{filename}`
+
+Delete a file.
+
+**Path Parameters:**
+- `user_id` (integer): The user's unique identifier
+- `filename` (string): The name of the file
+
+**Success Response (200 OK):**
+```json
+{
+  "message": "File 'document.pdf' deleted successfully"
+}
+```
+
+**Error Responses:**
+- `404 Not Found` - User not found or File not found
+
+---
+
+## File Storage
+
+Files are stored in the filesystem under `app/storage/users/{user_id}/`.
+
+File metadata is stored in the `files` table with:
+- `user_id`: Owner reference
+- `filename`: Original file name
+- `filepath`: Full path to the stored file
+
+**File Isolation:** Each user has their own storage directory. Files are isolated between users - users cannot access other users' files.
 
 ---
 
@@ -182,5 +298,5 @@ The API is configured to allow access from local network hosts:
 |-------------------|-------------|
 | Health Check      | ✅ Complete |
 | User Routes       | ✅ Complete |
-| File Routes       | ⏳ Pending  |
+| File Routes       | ✅ Complete |
 | Shared Routes     | ⏳ Pending  |

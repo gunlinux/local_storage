@@ -88,6 +88,43 @@ Repository pattern for user database operations.
 
 ---
 
+### `File` (Dataclass)
+
+Located in: `app/models/file.py`
+
+```python
+@dataclass
+class File:
+    id: int
+    user_id: int
+    filename: str
+    filepath: str
+    created_at: str
+```
+
+**Methods:**
+- `to_dict()` - Convert file to dictionary
+- `from_row(row)` - Create File instance from database row
+
+---
+
+### `FileRepository`
+
+Repository pattern for file database operations.
+
+| Method              | Description                                      | Returns                    |
+|---------------------|--------------------------------------------------|----------------------------|
+| `create(cursor, user_id, filename, filepath)` | Create a new file record | `int` (ID) or `None`       |
+| `get_by_id(cursor, file_id)` | Get file by ID                         | `File` or `None`           |
+| `get_by_filename(cursor, user_id, filename)` | Get file by user and filename | `File` or `None`       |
+| `list_by_user(cursor, user_id)` | List all files for a user           | `list[File]`               |
+| `delete(cursor, file_id)` | Delete a file by ID                       | `bool`                     |
+| `delete_by_filename(cursor, user_id, filename)` | Delete file by user and filename | `bool`        |
+| `exists(cursor, file_id)` | Check if file exists by ID                | `bool`                     |
+| `file_exists_for_user(cursor, user_id, filename)` | Check if file exists for user | `bool`             |
+
+---
+
 ## Pydantic Schemas
 
 ### `UserCreate`
@@ -108,8 +145,35 @@ class UserResponse(BaseModel):
     id: int
     username: str
     created_at: str
-    
+
     model_config = {"from_attributes": True}
+```
+
+---
+
+### `FileResponse`
+
+Schema for file API responses.
+
+```python
+class FileResponse(BaseModel):
+    id: int
+    user_id: int
+    filename: str
+    created_at: str
+
+    model_config = {"from_attributes": True}
+```
+
+### `FileUploadResponse`
+
+Schema for file upload API responses.
+
+```python
+class FileUploadResponse(BaseModel):
+    message: str
+    filename: str
+    user_id: int
 ```
 
 ---

@@ -37,7 +37,7 @@ Once the server is running, access the interactive API documentation:
 |--------|----------|-------------|
 | GET | `/health` | Health check |
 
-### Users (Coming Soon)
+### Users
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | POST | `/users` | Create a new user |
@@ -45,12 +45,13 @@ Once the server is running, access the interactive API documentation:
 | GET | `/users/{user_id}` | Get user details |
 | DELETE | `/users/{user_id}` | Delete a user |
 
-### User Files (Coming Soon)
+### User Files
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | POST | `/users/{user_id}/files` | Upload a file |
 | GET | `/users/{user_id}/files` | List user's files |
-| GET | `/users/{user_id}/files/{filename}` | Download a file |
+| GET | `/users/{user_id}/files/{filename}` | Get file info |
+| GET | `/users/{user_id}/files/{filename}/download` | Download a file |
 | DELETE | `/users/{user_id}/files/{filename}` | Delete a file |
 
 ### Shared Storage (Coming Soon)
@@ -85,6 +86,36 @@ some_project/
 ├── tests/
 ├── pyproject.toml
 └── README.md
+```
+
+## API Usage Examples
+
+### Create a User
+```bash
+curl -X POST http://localhost:8000/users \
+  -H "Content-Type: application/json" \
+  -d '{"username": "alice"}'
+```
+
+### Upload a File
+```bash
+curl -X POST http://localhost:8000/users/1/files \
+  -F "file=@/path/to/your/file.txt"
+```
+
+### List User's Files
+```bash
+curl http://localhost:8000/users/1/files
+```
+
+### Download a File
+```bash
+curl -O http://localhost:8000/users/1/files/file.txt/download
+```
+
+### Delete a File
+```bash
+curl -X DELETE http://localhost:8000/users/1/files/file.txt
 ```
 
 ## Network Access
