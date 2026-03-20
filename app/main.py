@@ -4,8 +4,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.config import ALLOWED_HOSTS
+from app.config import ALLOWED_HOSTS, LOG_LEVEL
 from app.database import init_db
+from app.logging_config import setup_logging
 from app.routers.files import router as files_router
 from app.routers.shared import router as shared_router
 from app.routers.users import router as users_router
@@ -14,7 +15,10 @@ from app.routers.users import router as users_router
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application lifespan manager."""
-    # Startup: initialize database
+    # Setup logging
+    setup_logging(LOG_LEVEL)
+    
+    # Initialize database
     init_db()
     yield
     # Shutdown: cleanup if needed

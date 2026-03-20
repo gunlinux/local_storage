@@ -10,5 +10,8 @@ SHARED_STORAGE_DIR = STORAGE_DIR / "shared"
 USERS_STORAGE_DIR.mkdir(parents=True, exist_ok=True)
 SHARED_STORAGE_DIR.mkdir(parents=True, exist_ok=True)
 
+# Logging configuration
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+
 # CORS settings for local network access
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
