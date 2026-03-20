@@ -1,8 +1,8 @@
 """Database connection and session management using raw SQLite."""
 
 import sqlite3
+from collections.abc import Generator
 from contextlib import contextmanager
-from pathlib import Path
 
 from app.config import BASE_DIR
 
@@ -17,7 +17,7 @@ def get_connection() -> sqlite3.Connection:
 
 
 @contextmanager
-def get_session():
+def get_session() -> Generator[sqlite3.Connection, None, None]:
     """Context manager for database sessions."""
     conn = get_connection()
     try:

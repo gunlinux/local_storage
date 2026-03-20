@@ -1,3 +1,4 @@
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -8,9 +9,9 @@ from app.database import init_db
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application lifespan manager."""
-    # Startup: Initialize database
+    # Startup: initialize database
     init_db()
     yield
     # Shutdown: cleanup if needed
@@ -34,6 +35,6 @@ app.add_middleware(
 
 
 @app.get("/health")
-def health_check():
+def health_check() -> dict[str, str]:
     """Health check endpoint to verify the service is running."""
     return {"status": "healthy"}

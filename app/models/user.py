@@ -1,10 +1,7 @@
 """User model with raw SQL queries."""
 
-from dataclasses import dataclass
-from datetime import datetime
-from typing import Optional
-
 import sqlite3
+from dataclasses import dataclass
 
 
 @dataclass
@@ -15,7 +12,7 @@ class User:
     username: str
     created_at: str
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, str | int]:
         """Convert user to dictionary."""
         return {
             "id": self.id,
@@ -37,7 +34,7 @@ class UserRepository:
     """Repository for user-related database operations using raw SQL."""
 
     @staticmethod
-    def create(cursor: sqlite3.Cursor, username: str) -> Optional[int]:
+    def create(cursor: sqlite3.Cursor, username: str) -> int | None:
         """
         Create a new user.
 
@@ -50,7 +47,7 @@ class UserRepository:
             return None
 
     @staticmethod
-    def get_by_id(cursor: sqlite3.Cursor, user_id: int) -> Optional[User]:
+    def get_by_id(cursor: sqlite3.Cursor, user_id: int) -> User | None:
         """Get a user by ID."""
         cursor.execute(
             "SELECT id, username, created_at FROM users WHERE id = ?", (user_id,)
@@ -59,7 +56,7 @@ class UserRepository:
         return User.from_row(row) if row else None
 
     @staticmethod
-    def get_by_username(cursor: sqlite3.Cursor, username: str) -> Optional[User]:
+    def get_by_username(cursor: sqlite3.Cursor, username: str) -> User | None:
         """Get a user by username."""
         cursor.execute(
             "SELECT id, username, created_at FROM users WHERE username = ?", (username,)

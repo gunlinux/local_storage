@@ -18,7 +18,7 @@ The project has been set up with the following structure:
 
 ### Dependencies (`pyproject.toml`)
 - **Runtime**: fastapi>=0.104.0, uvicorn[standard]>=0.24.0, python-multipart>=0.0.6, pydantic>=2.0.0
-- **Dev**: pytest>=7.4.0, httpx>=0.25.0
+- **Dev**: pytest>=7.4.0, httpx>=0.25.0, ruff>=0.1.0, mypy>=1.7.0
 - **Build**: hatchling
 
 ### Project Structure
@@ -79,6 +79,8 @@ uv run pytest
 - **Pydantic v2** for schemas/validation
 - **Hatchling** as build backend
 - **Python 3.10+** required
+- **Linting**: ruff with line-length 88
+- **Type checking**: mypy in strict mode
 
 ## Implementation Status
 
@@ -90,7 +92,8 @@ uv run pytest
 | User schemas | ✅ Created |
 | User service | ✅ Created + tests |
 | Database config | ✅ Created |
-| API routers | 🔄 Placeholder |
+| Main app (FastAPI) | ✅ Created with CORS & lifespan |
+| API routers | ⏳ Pending |
 | File storage endpoints | ⏳ Pending |
 | Shared storage endpoints | ⏳ Pending |
 

@@ -1,14 +1,12 @@
 """Tests for user service CRUD operations."""
 
-import os
-import pytest
-import sqlite3
-from pathlib import Path
 
-from app.database import get_session, init_db, DATABASE_PATH
+import pytest
+
+from app.database import get_session, init_db
 from app.models.user import User, UserRepository
-from app.services.user_service import UserService
 from app.schemas.user import UserCreate
+from app.services.user_service import UserService
 
 
 @pytest.fixture(autouse=True)
@@ -17,7 +15,7 @@ def setup_test_db(tmp_path, monkeypatch):
     # Use a temporary database file
     test_db = tmp_path / "test_database.db"
     monkeypatch.setattr("app.database.DATABASE_PATH", test_db)
-    
+
     # Initialize the test database
     init_db()
     yield
@@ -39,7 +37,7 @@ class TestUserService:
         """Test creating a new user."""
         user_data = UserCreate(username="testuser")
         user = user_service.create_user(user_data)
-        
+
         assert user is not None
         assert user.username == "testuser"
         assert user.id == 1
@@ -50,7 +48,7 @@ class TestUserService:
         user_data = UserCreate(username="testuser")
         user1 = user_service.create_user(user_data)
         assert user1 is not None
-        
+
         user2 = user_service.create_user(user_data)
         assert user2 is None
 
@@ -58,9 +56,9 @@ class TestUserService:
         """Test getting a user by ID."""
         user_data = UserCreate(username="testuser")
         created_user = user_service.create_user(user_data)
-        
+
         retrieved_user = user_service.get_user(created_user.id)
-        
+
         assert retrieved_user is not None
         assert retrieved_user.id == created_user.id
         assert retrieved_user.username == created_user.username
@@ -74,9 +72,9 @@ class TestUserService:
         """Test getting a user by username."""
         user_data = UserCreate(username="testuser")
         created_user = user_service.create_user(user_data)
-        
+
         retrieved_user = user_service.get_user_by_username("testuser")
-        
+
         assert retrieved_user is not None
         assert retrieved_user.id == created_user.id
         assert retrieved_user.username == created_user.username
@@ -91,9 +89,9 @@ class TestUserService:
         user_service.create_user(UserCreate(username="user1"))
         user_service.create_user(UserCreate(username="user2"))
         user_service.create_user(UserCreate(username="user3"))
-        
+
         users = user_service.list_users()
-        
+
         assert len(users) == 3
         usernames = [u.username for u in users]
         assert "user1" in usernames
@@ -109,10 +107,10 @@ class TestUserService:
         """Test deleting a user."""
         user_data = UserCreate(username="testuser")
         created_user = user_service.create_user(user_data)
-        
+
         result = user_service.delete_user(created_user.id)
         assert result is True
-        
+
         # Verify user is deleted
         deleted_user = user_service.get_user(created_user.id)
         assert deleted_user is None
@@ -126,7 +124,7 @@ class TestUserService:
         """Test checking if a user exists."""
         user_data = UserCreate(username="testuser")
         created_user = user_service.create_user(user_data)
-        
+
         assert user_service.user_exists(created_user.id) is True
         assert user_service.user_exists(999) is False
 
@@ -138,11 +136,11 @@ class TestUserRepository:
         """Test creating and retrieving a user with raw SQL."""
         with get_session() as conn:
             cursor = conn.cursor()
-            
+
             # Create user
             user_id = UserRepository.create(cursor, "repo_user")
             assert user_id is not None
-            
+
             # Retrieve by ID
             user = UserRepository.get_by_id(cursor, user_id)
             assert user is not None
@@ -153,11 +151,11 @@ class TestUserRepository:
         """Test that duplicate username raises IntegrityError."""
         with get_session() as conn:
             cursor = conn.cursor()
-            
+
             # Create first user
             user_id1 = UserRepository.create(cursor, "duplicate_user")
             assert user_id1 is not None
-            
+
             # Try to create duplicate
             user_id2 = UserRepository.create(cursor, "duplicate_user")
             assert user_id2 is None
@@ -166,10 +164,10 @@ class TestUserRepository:
         """Test that list_all returns users ordered by created_at."""
         with get_session() as conn:
             cursor = conn.cursor()
-            
+
             UserRepository.create(cursor, "first_user")
             UserRepository.create(cursor, "second_user")
-            
+
             users = UserRepository.list_all(cursor)
             assert len(users) == 2
             assert users[0].username == "first_user"
@@ -179,13 +177,14 @@ class TestUserRepository:
         """Test that delete returns boolean for success/failure."""
         with get_session() as conn:
             cursor = conn.cursor()
-            
+
             user_id = UserRepository.create(cursor, "to_delete")
-            
+            assert user_id is not None
+
             # Delete existing user
             result = UserRepository.delete(cursor, user_id)
             assert result is True
-            
+
             # Try to delete non-existent user
             result = UserRepository.delete(cursor, 999)
             assert result is False
@@ -194,8 +193,9 @@ class TestUserRepository:
         """Test exists method."""
         with get_session() as conn:
             cursor = conn.cursor()
-            
+
             user_id = UserRepository.create(cursor, "exists_test")
-            
+            assert user_id is not None
+
             assert UserRepository.exists(cursor, user_id) is True
             assert UserRepository.exists(cursor, 999) is False

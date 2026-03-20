@@ -1,6 +1,5 @@
 """User service with CRUD operations using repository pattern and raw SQL."""
 
-from typing import Optional
 
 from app.database import get_session
 from app.models.user import User, UserRepository
@@ -10,7 +9,7 @@ from app.schemas.user import UserCreate
 class UserService:
     """Service layer for user operations using repository pattern."""
 
-    def create_user(self, user_data: UserCreate) -> Optional[User]:
+    def create_user(self, user_data: UserCreate) -> User | None:
         """
         Create a new user.
 
@@ -23,13 +22,13 @@ class UserService:
                 return None
             return UserRepository.get_by_id(cursor, user_id)
 
-    def get_user(self, user_id: int) -> Optional[User]:
+    def get_user(self, user_id: int) -> User | None:
         """Get a user by ID."""
         with get_session() as conn:
             cursor = conn.cursor()
             return UserRepository.get_by_id(cursor, user_id)
 
-    def get_user_by_username(self, username: str) -> Optional[User]:
+    def get_user_by_username(self, username: str) -> User | None:
         """Get a user by username."""
         with get_session() as conn:
             cursor = conn.cursor()
