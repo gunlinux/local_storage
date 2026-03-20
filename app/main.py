@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import ALLOWED_HOSTS
 from app.database import init_db
+from app.routers.users import router as users_router
 
 
 @asynccontextmanager
@@ -32,6 +33,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Register routers
+app.include_router(users_router)
 
 
 @app.get("/health")

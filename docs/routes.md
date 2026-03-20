@@ -30,7 +30,7 @@ Health check endpoint to verify the service is running.
 
 ## User Routes
 
-> **Note**: User routes are currently being implemented. The following endpoints are planned based on the existing models and schemas.
+> **Status**: ✅ Complete
 
 ### `POST /users`
 
@@ -56,7 +56,7 @@ Create a new user.
 ```
 
 **Error Responses:**
-- `400 Bad Request` - Invalid username (e.g., already exists)
+- `400 Bad Request` - Username already exists
 
 ---
 
@@ -113,7 +113,7 @@ Delete a user by ID.
 **Success Response (200 OK):**
 ```json
 {
-  "message": "User deleted successfully"
+  "message": "User 1 deleted successfully"
 }
 ```
 
@@ -181,6 +181,6 @@ The API is configured to allow access from local network hosts:
 | Route Category    | Status      |
 |-------------------|-------------|
 | Health Check      | ✅ Complete |
-| User Routes       | ⏳ Pending  |
+| User Routes       | ✅ Complete |
 | File Routes       | ⏳ Pending  |
 | Shared Routes     | ⏳ Pending  |

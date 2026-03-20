@@ -96,6 +96,7 @@ uv run pytest
 - **Type checking**: mypy in strict mode
 - **On every database models change - update docs/models.md**
 - **On every route change - update docs/routes.md**
+- **Do not run Development server or curl for test, if u need test something - write a pytest and execute it using `make test`**
 
 ## Implementation Status
 
