@@ -13,7 +13,7 @@ This is a **FastAPI (Python)** project that implements a **local file storage sy
 
 ## Current State
 
-**✅ MVP Core Features Complete (Phases 1-5)**
+**✅ MVP Complete - All Phases (1-7)**
 
 ### Implementation Progress
 
@@ -25,11 +25,16 @@ This is a **FastAPI (Python)** project that implements a **local file storage sy
 | Phase 4 | User File Storage API | ✅ Complete |
 | Phase 5 | Shared Storage API | ✅ Complete |
 | Phase 6 | Testing | ✅ Complete (68 tests passing) |
-| Phase 7 | Documentation & Polish | ⏳ In Progress |
+| Phase 7 | Documentation & Polish | ✅ Complete |
 
 ### Test Status
 - **Total Tests**: 68 passing
 - **Coverage**: User endpoints, File endpoints, Shared endpoints, Services, File integrity
+
+### Quality Assurance
+- **Linting**: ruff ✅
+- **Type Checking**: mypy ✅
+- **Tests**: pytest (68 tests) ✅
 
 ## Project Structure
 
@@ -40,10 +45,11 @@ some_project/
 │   ├── main.py              # FastAPI app entry point
 │   ├── config.py            # Configuration settings
 │   ├── database.py          # Database connection (SQLite, raw SQL)
+│   ├── logging_config.py    # Logging configuration
 │   ├── models/
 │   │   ├── __init__.py
 │   │   ├── user.py          # User model (dataclass + repository)
-│   │   └── file.py          # File model (dataclass + repository)
+│   │   ├── file.py          # File model (dataclass + repository)
 │   │   └── shared_file.py   # SharedFile model (dataclass + repository)
 │   ├── schemas/
 │   │   ├── __init__.py
@@ -57,7 +63,7 @@ some_project/
 │   ├── services/
 │   │   ├── __init__.py
 │   │   ├── user_service.py  # User business logic
-│   │   └── file_service.py  # File business logic
+│   │   ├── file_service.py  # File business logic
 │   │   └── shared_file_service.py  # Shared file business logic
 │   └── storage/
 │       ├── database.db      # SQLite database
@@ -66,6 +72,8 @@ some_project/
 ├── docs/
 │   ├── models.md            # Database models documentation
 │   └── routes.md            # API routes documentation
+├── logs/
+│   └── app.log              # Application logs
 ├── tests/
 │   ├── __init__.py
 │   ├── conftest.py        # Shared pytest fixtures
@@ -74,11 +82,13 @@ some_project/
 │   ├── test_shared.py     # Shared endpoint tests (12 tests)
 │   ├── test_user_service.py # User service tests
 │   └── test_file_integrity.py # File integrity tests (10 tests)
+├── .env.example           # Example environment configuration
 ├── pyproject.toml
 ├── README.md
 ├── PLAN.md                  # Implementation plan
 ├── PHASE04.md               # Phase 4 completion summary
 ├── PHASE05.md               # Phase 5 completion summary
+├── PHASE07.md               # Phase 7 completion summary
 └── QWEN.md
 ```
 
@@ -181,6 +191,8 @@ make qa  # Runs lint, type-check, and tests
 - **Python 3.10+** required
 - **Linting**: ruff with line-length 88
 - **Type checking**: mypy in strict mode
+- **Logging**: Centralized logging to console and `logs/app.log`
+- **Environment**: Configuration via `.env` file (see `.env.example`)
 - **On every database models change** - update `docs/models.md`
 - **On every route change** - update `docs/routes.md`
 - **Do not run Development server or curl for test** - write pytest tests and execute using `make test`
@@ -199,11 +211,23 @@ Business logic is encapsulated in service classes:
 - `FileService` - User file operations
 - `SharedFileService` - Shared file operations
 
+### Logging
+Centralized logging configuration with console and file handlers:
+- **Configuration**: `app/logging_config.py`
+- **Log file**: `logs/app.log`
+- **Levels**: DEBUG, INFO, WARNING, ERROR, CRITICAL
+- **Configured via**: `LOG_LEVEL` environment variable
+
 ### File Storage
 - **User files**: `app/storage/users/{user_id}/{filename}`
 - **Shared files**: `app/storage/shared/{filename}`
+
+### Environment Configuration
+- **File**: `.env` (copy from `.env.example`)
+- **Variables**: `LOG_LEVEL`, `ALLOWED_HOSTS`, `HOST`, `PORT`
 
 ## Qwen Added Memories
 - /Users/loki/llm/fastapi.md
 - docs/models.md
 - docs/routes.md
+- PLAN.md
