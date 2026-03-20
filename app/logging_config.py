@@ -2,7 +2,6 @@
 
 import logging
 import sys
-from pathlib import Path
 
 from app.config import BASE_DIR
 

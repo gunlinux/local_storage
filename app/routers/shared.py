@@ -23,9 +23,8 @@ def upload_file(file: UploadFile) -> SharedFileUploadResponse:
 
     Note: No authentication required.
     """
-    filename = file.filename or "unknown"
-    logger.info(f"Upload shared file request received, file: {filename}")
-    
+    logger.info(f"Upload shared file request received, file: {file.filename or 'unknown'}")
+
     # Get filename (UploadFile.filename can be None)
     filename = file.filename
     if filename is None:
@@ -148,7 +147,7 @@ def delete_file(filename: str) -> dict[str, str]:
     Note: No authentication required.
     """
     logger.info(f"Delete shared file request received: {filename}")
-    
+
     # Check if file exists
     if not shared_file_service.file_exists(filename):
         logger.warning(f"Delete shared file failed: file '{filename}' not found")

@@ -17,7 +17,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application lifespan manager."""
     # Setup logging
     setup_logging(LOG_LEVEL)
-    
+
     # Initialize database
     init_db()
     yield

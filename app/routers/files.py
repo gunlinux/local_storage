@@ -23,9 +23,8 @@ def upload_file(user_id: int, file: UploadFile) -> FileUploadResponse:
 
     Returns the uploaded file information.
     """
-    filename = file.filename or "unknown"
-    logger.info(f"Upload file request received for user {user_id}, file: {filename}")
-    
+    logger.info(f"Upload file request received for user {user_id}, file: {file.filename or 'unknown'}")
+
     # Validate user exists
     if not user_service.user_exists(user_id):
         logger.warning(f"Upload file failed: user {user_id} not found")
@@ -77,7 +76,7 @@ def list_files(user_id: int) -> list[FileResponse]:
     Returns a list of all files owned by the user.
     """
     logger.debug(f"List files request received for user {user_id}")
-    
+
     # Validate user exists
     if not user_service.user_exists(user_id):
         logger.warning(f"List files failed: user {user_id} not found")
@@ -110,7 +109,7 @@ def download_file(user_id: int, filename: str) -> FileResponse:
     Returns the file for download.
     """
     logger.debug(f"Get file info request received for user {user_id}, file: {filename}")
-    
+
     # Validate user exists
     if not user_service.user_exists(user_id):
         logger.warning(f"Get file info failed: user {user_id} not found")
@@ -148,7 +147,7 @@ def download_file_direct(user_id: int, filename: str) -> FastAPIFileResponse:
     Returns the file content for download.
     """
     logger.info(f"Download file request received for user {user_id}, file: {filename}")
-    
+
     # Validate user exists
     if not user_service.user_exists(user_id):
         logger.warning(f"Download file failed: user {user_id} not found")
@@ -184,7 +183,7 @@ def delete_file(user_id: int, filename: str) -> dict[str, str]:
     Returns a success message.
     """
     logger.info(f"Delete file request received for user {user_id}, file: {filename}")
-    
+
     # Validate user exists
     if not user_service.user_exists(user_id):
         logger.warning(f"Delete file failed: user {user_id} not found")
