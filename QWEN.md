@@ -12,7 +12,7 @@ This is a **FastAPI (Python)** project that implements a **local file storage sy
 
 ## Current State
 
-**✅ Project Initialized**
+**✅ Project Initialized with Documentation**
 
 The project has been set up with the following structure:
 
@@ -28,10 +28,10 @@ some_project/
 │   ├── __init__.py
 │   ├── main.py              # FastAPI app entry point
 │   ├── config.py            # Configuration settings
-│   ├── database.py          # Database connection
+│   ├── database.py          # Database connection (SQLite, raw SQL)
 │   ├── models/
 │   │   ├── __init__.py
-│   │   └── user.py          # User model
+│   │   └── user.py          # User model (dataclass + repository)
 │   ├── schemas/
 │   │   ├── __init__.py
 │   │   └── user.py          # User Pydantic schemas
@@ -43,6 +43,9 @@ some_project/
 │   └── storage/
 │       ├── users/           # Per-user file storage
 │       └── shared/          # Shared public storage
+├── docs/
+│   ├── models.md            # Database models documentation
+│   └── routes.md            # API routes documentation
 ├── tests/
 │   ├── __init__.py
 │   └── test_user_service.py # User service tests
@@ -50,6 +53,16 @@ some_project/
 ├── README.md
 └── QWEN.md
 ```
+
+### Database Schema
+
+**Tables:**
+- `users` - User accounts (id, username, created_at)
+- `files` - File metadata (id, user_id, filename, filepath, created_at)
+
+**Location:** `app/storage/database.db`
+
+**Access:** Raw SQL queries (no ORM)
 
 ## Building and Running
 
@@ -81,6 +94,8 @@ uv run pytest
 - **Python 3.10+** required
 - **Linting**: ruff with line-length 88
 - **Type checking**: mypy in strict mode
+- **On every database models change - update docs/models.md**
+- **On every route change - update docs/routes.md**
 
 ## Implementation Status
 
@@ -88,14 +103,18 @@ uv run pytest
 |-----------|--------|
 | Project structure | ✅ Complete |
 | Dependencies | ✅ Configured |
-| User model | ✅ Created |
-| User schemas | ✅ Created |
+| User model | ✅ Created (dataclass + repository) |
+| User schemas | ✅ Created (UserCreate, UserResponse) |
 | User service | ✅ Created + tests |
-| Database config | ✅ Created |
+| Database config | ✅ Created (SQLite with raw SQL) |
 | Main app (FastAPI) | ✅ Created with CORS & lifespan |
-| API routers | ⏳ Pending |
+| Health endpoint | ✅ Complete (`GET /health`) |
+| API documentation | ✅ Complete (`docs/models.md`, `docs/routes.md`) |
+| User routes | ⏳ In Progress |
 | File storage endpoints | ⏳ Pending |
 | Shared storage endpoints | ⏳ Pending |
 
 ## Qwen Added Memories
 - /Users/loki/llm/fastapi.md
+- docs/models.md
+- docs/routes.md
