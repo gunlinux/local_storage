@@ -125,6 +125,42 @@ Repository pattern for file database operations.
 
 ---
 
+### `SharedFile` (Dataclass)
+
+Located in: `app/models/shared_file.py`
+
+```python
+@dataclass
+class SharedFile:
+    id: int
+    filename: str
+    filepath: str
+    created_at: str
+```
+
+**Methods:**
+- `to_dict()` - Convert shared file to dictionary
+- `from_row(row)` - Create SharedFile instance from database row
+
+---
+
+### `SharedFileRepository`
+
+Repository pattern for shared file database operations.
+
+| Method              | Description                                      | Returns                    |
+|---------------------|--------------------------------------------------|----------------------------|
+| `create(cursor, filename, filepath)` | Create a new shared file record | `int` (ID) or `None`       |
+| `get_by_id(cursor, file_id)` | Get shared file by ID                 | `SharedFile` or `None`     |
+| `get_by_filename(cursor, filename)` | Get shared file by filename     | `SharedFile` or `None`     |
+| `list_all(cursor)` | List all shared files                           | `list[SharedFile]`         |
+| `delete(cursor, file_id)` | Delete a shared file by ID                | `bool`                     |
+| `delete_by_filename(cursor, filename)` | Delete shared file by filename | `bool`         |
+| `exists(cursor, file_id)` | Check if shared file exists by ID         | `bool`                     |
+| `file_exists(cursor, filename)` | Check if shared file exists by filename | `bool`             |
+
+---
+
 ## Pydantic Schemas
 
 ### `UserCreate`
@@ -178,6 +214,31 @@ class FileUploadResponse(BaseModel):
 
 ---
 
+### `SharedFileResponse`
+
+Schema for shared file API responses.
+
+```python
+class SharedFileResponse(BaseModel):
+    id: int
+    filename: str
+    created_at: str
+
+    model_config = {"from_attributes": True}
+```
+
+### `SharedFileUploadResponse`
+
+Schema for shared file upload API responses.
+
+```python
+class SharedFileUploadResponse(BaseModel):
+    message: str
+    filename: str
+```
+
+---
+
 ## Database Initialization
 
 The database is initialized automatically on application startup via `app/database.py`:
@@ -187,4 +248,12 @@ def init_db() -> None:
     """Initialize the database and create tables."""
 ```
 
-This creates both `users` and `files` tables if they don't exist.
+This creates `users`, `files`, and `shared_files` tables if they don't exist.
+
+### Tables Created
+
+| Table          | Description                              |
+|----------------|------------------------------------------|
+| `users`        | User accounts                            |
+| `files`        | User file metadata                       |
+| `shared_files` | Shared/public file metadata              |

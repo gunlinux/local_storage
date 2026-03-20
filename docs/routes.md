@@ -256,16 +256,117 @@ File metadata is stored in the `files` table with:
 
 ## Shared Storage Routes
 
-> **Note**: Shared/public storage routes are pending implementation.
+> **Status**: ✅ Complete
 
-### Planned Endpoints
+Shared storage is accessible without authentication. Anyone can upload, download, and manage shared files.
 
-| Method | Endpoint              | Description                    |
-|--------|-----------------------|--------------------------------|
-| `GET`  | `/shared/files`       | List all shared files          |
-| `POST` | `/shared/files`       | Upload a shared file           |
-| `GET`  | `/shared/files/{file_id}/download` | Download shared file |
-| `DELETE` | `/shared/files/{file_id}` | Delete a shared file     |
+### `POST /shared/files`
+
+Upload a file to shared storage.
+
+**Request Body:** `multipart/form-data`
+- `file` (file, required): The file to upload
+
+**Success Response (201 Created):**
+```json
+{
+  "message": "File uploaded successfully to shared storage",
+  "filename": "document.pdf"
+}
+```
+
+**Error Responses:**
+- `409 Conflict` - File already exists in shared storage
+- `400 Bad Request` - Filename is required or Failed to upload file
+
+---
+
+### `GET /shared/files`
+
+List all shared files.
+
+**Success Response (200 OK):**
+```json
+[
+  {
+    "id": 1,
+    "filename": "document.pdf",
+    "created_at": "2026-03-20T11:00:00"
+  },
+  {
+    "id": 2,
+    "filename": "image.png",
+    "created_at": "2026-03-20T11:30:00"
+  }
+]
+```
+
+---
+
+### `GET /shared/files/{filename}`
+
+Get shared file metadata.
+
+**Path Parameters:**
+- `filename` (string): The name of the file
+
+**Success Response (200 OK):**
+```json
+{
+  "id": 1,
+  "filename": "document.pdf",
+  "created_at": "2026-03-20T11:00:00"
+}
+```
+
+**Error Responses:**
+- `404 Not Found` - File not found
+
+---
+
+### `GET /shared/files/{filename}/download`
+
+Download a file from shared storage.
+
+**Path Parameters:**
+- `filename` (string): The name of the file
+
+**Success Response (200 OK):**
+- Returns the file content with `Content-Type: application/octet-stream`
+
+**Error Responses:**
+- `404 Not Found` - File not found
+
+---
+
+### `DELETE /shared/files/{filename}`
+
+Delete a file from shared storage.
+
+**Path Parameters:**
+- `filename` (string): The name of the file
+
+**Success Response (200 OK):**
+```json
+{
+  "message": "File 'document.pdf' deleted successfully from shared storage"
+}
+```
+
+**Error Responses:**
+- `404 Not Found` - File not found
+
+---
+
+## Shared File Storage
+
+Shared files are stored in the filesystem under `app/storage/shared/`.
+
+File metadata is stored in the `shared_files` table with:
+- `filename`: Original file name (unique)
+- `filepath`: Full path to the stored file
+
+**Note:** Shared storage is public - no authentication is required for any operations.
 
 ---
 
@@ -299,4 +400,4 @@ The API is configured to allow access from local network hosts:
 | Health Check      | ✅ Complete |
 | User Routes       | ✅ Complete |
 | File Routes       | ✅ Complete |
-| Shared Routes     | ⏳ Pending  |
+| Shared Routes     | ✅ Complete |

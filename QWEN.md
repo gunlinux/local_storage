@@ -6,22 +6,33 @@ This is a **FastAPI (Python)** project that implements a **local file storage sy
 
 ### Key Features
 - User creation and management
-- File storage per user
+- File storage per user (isolated)
 - Network-shared storage access
 - Password-free access for shared storage
+- RESTful API with full CRUD operations
 
 ## Current State
 
-**✅ Project Initialized with Documentation**
+**✅ MVP Core Features Complete (Phases 1-5)**
 
-The project has been set up with the following structure:
+### Implementation Progress
 
-### Dependencies (`pyproject.toml`)
-- **Runtime**: fastapi>=0.104.0, uvicorn[standard]>=0.24.0, python-multipart>=0.0.6, pydantic>=2.0.0
-- **Dev**: pytest>=7.4.0, httpx>=0.25.0, ruff>=0.1.0, mypy>=1.7.0
-- **Build**: hatchling
+| Phase | Component | Status |
+|-------|-----------|--------|
+| Phase 1 | Project Setup | ✅ Complete |
+| Phase 2 | Database & User Model | ✅ Complete |
+| Phase 3 | User Management API | ✅ Complete |
+| Phase 4 | User File Storage API | ✅ Complete |
+| Phase 5 | Shared Storage API | ✅ Complete |
+| Phase 6 | Testing | ⏳ In Progress (58 tests passing) |
+| Phase 7 | Documentation & Polish | ⏳ In Progress |
 
-### Project Structure
+### Test Status
+- **Total Tests**: 58 passing
+- **Coverage**: User endpoints, File endpoints, Shared endpoints, Services
+
+## Project Structure
+
 ```
 some_project/
 ├── app/
@@ -31,16 +42,25 @@ some_project/
 │   ├── database.py          # Database connection (SQLite, raw SQL)
 │   ├── models/
 │   │   ├── __init__.py
-│   │   └── user.py          # User model (dataclass + repository)
+│   │   ├── user.py          # User model (dataclass + repository)
+│   │   └── file.py          # File model (dataclass + repository)
+│   │   └── shared_file.py   # SharedFile model (dataclass + repository)
 │   ├── schemas/
 │   │   ├── __init__.py
-│   │   └── user.py          # User Pydantic schemas
+│   │   ├── user.py          # User Pydantic schemas
+│   │   └── file.py          # File Pydantic schemas
 │   ├── routers/
-│   │   └── __init__.py      # API routers (placeholder)
+│   │   ├── __init__.py
+│   │   ├── users.py         # User endpoints
+│   │   ├── files.py         # User file endpoints
+│   │   └── shared.py        # Shared storage endpoints
 │   ├── services/
 │   │   ├── __init__.py
-│   │   └── user_service.py  # User business logic
+│   │   ├── user_service.py  # User business logic
+│   │   └── file_service.py  # File business logic
+│   │   └── shared_file_service.py  # Shared file business logic
 │   └── storage/
+│       ├── database.db      # SQLite database
 │       ├── users/           # Per-user file storage
 │       └── shared/          # Shared public storage
 ├── docs/
@@ -48,21 +68,81 @@ some_project/
 │   └── routes.md            # API routes documentation
 ├── tests/
 │   ├── __init__.py
+│   ├── test_users.py        # User endpoint tests
+│   ├── test_files.py        # File endpoint tests (19 tests)
+│   ├── test_shared.py       # Shared endpoint tests (12 tests)
 │   └── test_user_service.py # User service tests
 ├── pyproject.toml
 ├── README.md
+├── PLAN.md                  # Implementation plan
+├── PHASE04.md               # Phase 4 completion summary
+├── PHASE05.md               # Phase 5 completion summary
 └── QWEN.md
 ```
 
-### Database Schema
+## Dependencies
 
-**Tables:**
-- `users` - User accounts (id, username, created_at)
-- `files` - File metadata (id, user_id, filename, filepath, created_at)
+### Runtime
+- `fastapi>=0.104.0`
+- `uvicorn[standard]>=0.24.0`
+- `python-multipart>=0.0.6`
+- `pydantic>=2.0.0`
+
+### Dev
+- `pytest>=7.4.0`
+- `httpx>=0.25.0`
+- `ruff>=0.1.0`
+- `mypy>=1.7.0`
+
+### Build
+- `hatchling`
+
+## Database Schema
+
+### Tables
+
+| Table          | Description                              |
+|----------------|------------------------------------------|
+| `users`        | User accounts (id, username, created_at) |
+| `files`        | User file metadata (id, user_id, filename, filepath, created_at) |
+| `shared_files` | Shared file metadata (id, filename, filepath, created_at) |
 
 **Location:** `app/storage/database.db`
 
 **Access:** Raw SQL queries (no ORM)
+
+## API Endpoints
+
+### System
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/health` | Health check |
+
+### Users
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/users` | Create a new user |
+| GET | `/users` | List all users |
+| GET | `/users/{user_id}` | Get user details |
+| DELETE | `/users/{user_id}` | Delete a user |
+
+### User Files
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/users/{user_id}/files` | Upload a file |
+| GET | `/users/{user_id}/files` | List user's files |
+| GET | `/users/{user_id}/files/{filename}` | Get file info |
+| GET | `/users/{user_id}/files/{filename}/download` | Download a file |
+| DELETE | `/users/{user_id}/files/{filename}` | Delete a file |
+
+### Shared Storage
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/shared/files` | Upload to shared storage |
+| GET | `/shared/files` | List shared files |
+| GET | `/shared/files/{filename}` | Get file info |
+| GET | `/shared/files/{filename}/download` | Download from shared |
+| DELETE | `/shared/files/{filename}` | Delete shared file |
 
 ## Building and Running
 
@@ -86,34 +166,40 @@ The server will be available at:
 uv run pytest
 ```
 
+### Quality Assurance
+```bash
+make qa  # Runs lint, type-check, and tests
+```
+
 ## Development Conventions
 
-- **No SQLAlchemy** - Use alternative database approaches
+- **No SQLAlchemy** - Use raw SQL with repository pattern
 - **Pydantic v2** for schemas/validation
 - **Hatchling** as build backend
 - **Python 3.10+** required
 - **Linting**: ruff with line-length 88
 - **Type checking**: mypy in strict mode
-- **On every database models change - update docs/models.md**
-- **On every route change - update docs/routes.md**
-- **Do not run Development server or curl for test, if u need test something - write a pytest and execute it using `make test`**
+- **On every database models change** - update `docs/models.md`
+- **On every route change** - update `docs/routes.md`
+- **Do not run Development server or curl for test** - write pytest tests and execute using `make test`
 
-## Implementation Status
+## Architecture Patterns
 
-| Component | Status |
-|-----------|--------|
-| Project structure | ✅ Complete |
-| Dependencies | ✅ Configured |
-| User model | ✅ Created (dataclass + repository) |
-| User schemas | ✅ Created (UserCreate, UserResponse) |
-| User service | ✅ Created + tests |
-| Database config | ✅ Created (SQLite with raw SQL) |
-| Main app (FastAPI) | ✅ Created with CORS & lifespan |
-| Health endpoint | ✅ Complete (`GET /health`) |
-| API documentation | ✅ Complete (`docs/models.md`, `docs/routes.md`) |
-| User routes | ⏳ In Progress |
-| File storage endpoints | ⏳ Pending |
-| Shared storage endpoints | ⏳ Pending |
+### Repository Pattern
+All database operations use the repository pattern with raw SQL:
+- `UserRepository` - User CRUD operations
+- `FileRepository` - User file CRUD operations
+- `SharedFileRepository` - Shared file CRUD operations
+
+### Service Layer
+Business logic is encapsulated in service classes:
+- `UserService` - User operations
+- `FileService` - User file operations
+- `SharedFileService` - Shared file operations
+
+### File Storage
+- **User files**: `app/storage/users/{user_id}/{filename}`
+- **Shared files**: `app/storage/shared/{filename}`
 
 ## Qwen Added Memories
 - /Users/loki/llm/fastapi.md

@@ -56,4 +56,14 @@ def init_db() -> None:
             )
         """)
 
+        # Create shared_files table for public shared storage
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS shared_files (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                filename TEXT NOT NULL UNIQUE,
+                filepath TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
         conn.commit()

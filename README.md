@@ -54,12 +54,13 @@ Once the server is running, access the interactive API documentation:
 | GET | `/users/{user_id}/files/{filename}/download` | Download a file |
 | DELETE | `/users/{user_id}/files/{filename}` | Delete a file |
 
-### Shared Storage (Coming Soon)
+### Shared Storage
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | POST | `/shared/files` | Upload to shared storage |
 | GET | `/shared/files` | List shared files |
-| GET | `/shared/files/{filename}` | Download from shared |
+| GET | `/shared/files/{filename}` | Get file info |
+| GET | `/shared/files/{filename}/download` | Download from shared |
 | DELETE | `/shared/files/{filename}` | Delete shared file |
 
 ## Testing
@@ -116,6 +117,27 @@ curl -O http://localhost:8000/users/1/files/file.txt/download
 ### Delete a File
 ```bash
 curl -X DELETE http://localhost:8000/users/1/files/file.txt
+```
+
+### Upload to Shared Storage
+```bash
+curl -X POST http://localhost:8000/shared/files \
+  -F "file=@/path/to/your/file.txt"
+```
+
+### List Shared Files
+```bash
+curl http://localhost:8000/shared/files
+```
+
+### Download from Shared Storage
+```bash
+curl -O http://localhost:8000/shared/files/file.txt/download
+```
+
+### Delete from Shared Storage
+```bash
+curl -X DELETE http://localhost:8000/shared/files/file.txt
 ```
 
 ## Network Access
